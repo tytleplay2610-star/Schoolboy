@@ -1,9 +1,9 @@
 // Сервис-воркер: страница открывается и без интернета.
 // Сначала сеть (чтобы всегда была свежая версия), если сети нет, то сохранённая копия.
-const CACHE = "raspisanie-v2";
+const CACHE = "raspisanie-v3";
 const PAGE = "./index.html";
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll([PAGE, "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png"])));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll([PAGE, "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./bg-udushye.jpg", "./apple-touch-icon.png"])));
   self.skipWaiting();
 });
 self.addEventListener("activate", e => {
@@ -14,6 +14,7 @@ self.addEventListener("fetch", e => {
   if (r.method !== "GET") return;
   const u = new URL(r.url);
   if (u.origin !== location.origin) return;
+  if (u.pathname.endsWith(".mp3") || r.headers.has("range")) return; // музыку браузер грузит сам
   const isPage = r.mode === "navigate" || u.pathname.endsWith("/") || u.pathname.endsWith("/index.html");
   e.respondWith(
     fetch(r).then(res => {
